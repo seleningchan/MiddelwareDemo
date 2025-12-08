@@ -9,10 +9,60 @@ using Microsoft.Extensions.Logging;
 
 namespace MiddelwareDemo
 {
-    public class Program
+     class Test
+    {
+        public string Name { get; set; }
+    }
+    public class Person
+    {
+        public string Name { get; set; }
+
+        public int Age { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Person))
+            {
+                return false;
+            }
+            var p = (Person)obj;
+            Console.WriteLine(string.Format("Equals{0}", p.Name));
+            return this.Name == p.Name && this.Age == p.Age;
+        }
+
+        public override int GetHashCode()
+        {
+            Console.WriteLine(string.Format("GetHashCode{0}", this.Name));
+            return Name.GetHashCode() + Age * 37;
+        }
+    }
+    public class Program 
     {
         public static void Main(string[] args)
         {
+            var dic = new Dictionary<Person, int>();
+            dic.Add(new Person { Name = "ABC", Age = 18 }, 1);
+            dic.Add(new Person { Name = "Captain", Age = 24 }, 1);
+            dic.Add(new Person { Name = "Knee", Age = 28 }, 1);
+            dic.Add(new Person { Name = "Knee", Age = 28 }, 2);
+
+            foreach (var item in dic)
+            {
+                Console.WriteLine(string.Format("{0},{1}", item.Key.Name, item.Key.Age));
+            }
+
+
+            //Dictionary<Test, string> dic= new Dictionary<Test, string>();
+            //var testx = new Test();
+            //dic.Add(new Test(), "aaa");
+            //dic.Add(testx, "aaa");
+            const string hamlet = @"Though yet of Hamlet our dear brother's death
+The memory be green, and that it us befitted";
+            var temp = hamlet.Split(new[] { " ", Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var test = 1;
+
+
+
             //var builder = new ApplicationBuilder();
             //builder.Use(next =>
             //{
@@ -44,12 +94,12 @@ namespace MiddelwareDemo
             //var app = builder.Build();
             //var target = new Water();
             //app.Invoke(target);
-            
-            //var host = new WebHost();
-            //host.AddFilter(new Filter1());
-            //host.AddFilter(new Filter2());
-            //var context = new HttpContext();
-            //host.Execute(context, new HelloServlet());
+
+            var host = new WebHost();
+            host.AddFilter(new Filter1());
+            host.AddFilter(new Filter2());
+            var context = new HttpContext();
+            host.Execute(context, new HelloServlet());
 
             //IContainerBuilder containerBuilder = new ContainerBuilder();
             //containerBuilder.Add(c => new DbConnection());
